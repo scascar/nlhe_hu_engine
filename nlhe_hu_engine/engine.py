@@ -61,10 +61,10 @@ class Engine:
             for i in range(0, 3):
                 feat_flop[Card.get_rank_int(
                     self.community_cards[i])*self.get_card_real_suit_int(self.community_cards[i])] = 1
-        if self.current_street.value >= Street.TURN:
+        if self.current_street.value >= Street.TURN.value:
             feat_turn[Card.get_rank_int(
                 self.community_cards[3])*self.get_card_real_suit_int(self.community_cards[3])] = 1
-        if self.current_street.value >= Street.RIVER:
+        if self.current_street.value >= Street.RIVER.value:
             feat_turn[Card.get_rank_int(
                 self.community_cards[4])*self.get_card_real_suit_int(self.community_cards[4])] = 1
 
