@@ -88,7 +88,7 @@ class Engine:
 
     def get_bet_range(self):
         if self.street_actions == [self.small_blind, self.big_blind]:
-            return [2*self.big_blind, self.starting_stack-self.small_blind]
+            return [self.big_blind, self.starting_stack-self.small_blind]
         elif self.street_actions == [0, 0]:
             return [self.big_blind, self.starting_stack - self.pot[self.turn]]
         else:

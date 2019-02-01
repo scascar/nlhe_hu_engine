@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(
     name='nlhe-hu-engine',
-    version='0.0.1',
+    version='0.0.2',
     description='Simple Poker engine for head\'s up no limit hold\'em',
     long_description=open('README.md').read(),
     author='Oscar Blazejewski',
