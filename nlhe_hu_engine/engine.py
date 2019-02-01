@@ -3,19 +3,25 @@ from treys import Card, Evaluator, Deck
 from nlhe_hu_engine.constants import Actions, Street
 import operator
 import numpy as np
+import logging
 
 # player 0: sb
 # player 1: bb
 
 
+
+
 class Engine:
+
+    logger = logging.getLogger('nlhe_hu_engine')
     def __init__(self,  big_blind=20, small_blind=10):
+        self.logger.setLevel(logging.INFO)
         self.big_blind = big_blind
         self.small_blind = small_blind
         self.deck = Deck()
 
     def new_hand(self, starting_stack=500):
-        #print("=============   NEW HAND   ================")
+
         self.eval = Evaluator()
         self.deck = Deck()
         self.starting_stack = starting_stack
@@ -34,12 +40,13 @@ class Engine:
         self.current_action_feature = []
         self.current_street = Street.PREFLOP
         self.winner = -1
-        #print('NEW STREET ====== ', str(self.current_street))
+        self.logger.info('=============   NEW HAND   ================')
+        self.logger.info('NEW STREET ====== '+ str(self.current_street))
 
     def get_pocket_cards_features(self, player_index):
-        feat = np.zeros(13)
+        feat = np.zeros(52)
         for c in self.pocket_cards[player_index]:
-            feat[Card.get_rank_int(c)] = 1
+            feat[Card.get_rank_int(c)*self.get_card_real_suit_int(c)] = 1
         return feat
 
     def get_card_real_suit_int(self, card):
@@ -90,16 +97,16 @@ class Engine:
     def is_sb_turn(self):
         # new street
         if self.turn == 0:
-            #print('Small Blind to play')
+            self.logger.info('Small Blind to play')
             return True
         else:
-            #print('Big Blind to play')
+            self.logger.info('Big Blind to play')
             return False
 
     def play_action(self, action, amount):
         if self.winner == -1:
             if action == Actions.FOLD:
-                # print('folding')
+                self.logger.info('folding')
                 self.current_street = Street.FINISHED
                 self.winner = (self.turn+1) % 2
                 self.pot = list(
@@ -109,9 +116,9 @@ class Engine:
                 check = False
                 if self.street_actions == [0, 0]:
                     check = True
-                    # print("checking")
+                    self.logger.info('checking')
                 else:
-                    # print("calling")
+                    self.logger.info('calling')
                     self.street_actions[self.turn] = max(self.street_actions)
                     self.pot = list(
                         map(operator.add, self.pot, self.street_actions))
@@ -135,8 +142,8 @@ class Engine:
                         self.current_raise = 0
                         self.street_actions = [0, 0]
 
-                        #print('NEW STREET ====== ', str(self.current_street))
-                #print('pot:', str(self.pot))
+                        self.logger.info('NEW STREET ====== '+ str(self.current_street))
+                self.logger.info('pot:'+ str(self.pot))
 
             elif action == Actions.BET:
 
@@ -145,7 +152,7 @@ class Engine:
                 self.aggressor_by_street[self.current_street.value+self.turn] = 1
                 self.aggressor_by_street[self.current_street.value] = 0
 
-                #print('raising to ', str(self.street_actions[self.turn]))
+                self.logger.info('raising to '+ str(self.street_actions[self.turn]))
 
                 # Bet but was a call
                 if self.street_actions[0] == self.street_actions[1]:
@@ -156,7 +163,7 @@ class Engine:
 
                 self.turn = (self.turn+1) % 2
         else:
-            print('HAND FINISHED, WINNER IS: ', str(self.winner))
+            self.logger.info('HAND FINISHED, WINNER IS: '+ str(self.winner))
 
     def eval_winner(self):
         sb_score, bb_score = self.eval.evaluate(self.pocket_cards[0], self.community_cards), self.eval.evaluate(

@@ -10,7 +10,7 @@ setup(
     description='Simple Poker engine for head\'s up no limit hold\'em',
     long_description=open('README.md').read(),
     author='Oscar Blazejewski',
-    url='https://github.com/scascar/nlhe-hu-engine',
+    url='https://github.com/scascar/nlhe_hu_engine',
     license='MIT',
     packages=['nlhe_hu_engine'],
     classifiers=[
