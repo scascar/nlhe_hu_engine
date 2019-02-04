@@ -14,17 +14,15 @@ import logging
 class Engine:
 
     logger = logging.getLogger('nlhe_hu_engine')
-    def __init__(self,  big_blind=20, small_blind=10):
+    def __init__(self,  big_blind=20, small_blind=10,starting_stack=500):
         self.logger.setLevel(logging.INFO)
         self.big_blind = big_blind
         self.small_blind = small_blind
         self.deck = Deck()
+        self.evaluator = Evaluator()
 
-    def new_hand(self, starting_stack=500):
-
-        self.eval = Evaluator()
-        self.deck = Deck()
-        self.starting_stack = starting_stack
+    def new_hand(self):
+        self.deck.shuffle()
         self.pocket_cards = []
         self.pocket_cards.append(self.deck.draw(2))
         self.pocket_cards.append(self.deck.draw(2))
@@ -166,7 +164,7 @@ class Engine:
             self.logger.info('HAND FINISHED, WINNER IS: '+ str(self.winner))
 
     def eval_winner(self):
-        sb_score, bb_score = self.eval.evaluate(self.pocket_cards[0], self.community_cards), self.eval.evaluate(
+        sb_score, bb_score = self.evaluator.evaluate(self.pocket_cards[0], self.community_cards), self.evaluator.evaluate(
             self.pocket_cards[1], self.community_cards)
         if sb_score < bb_score:
             return 0
